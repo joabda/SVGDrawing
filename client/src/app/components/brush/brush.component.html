@@ -1,0 +1,31 @@
+<div id="container">
+  <form id="line-form">
+    <div class="group">
+      <label class="title" id="thickness">Épaisseur</label>
+      <mat-slider
+        [(ngModel)]="service.thickness"
+        id="thickness-slider"
+        name="thickness-slider"
+        disabled="false"
+        [min]="SLIDER_MINIMUM"
+        [max]="SLIDER_MAXIMUM"
+        step="1"
+        thumbLabel="true"
+        tickInterval="false"
+        vertical="false">
+      </mat-slider>
+    </div>
+    <div class="group">
+      <label class="title" id="texture">Texture</label>
+      <mat-radio-group
+        aria-labelledby="example-radio-group-label"
+        name="filter-selection"
+        [(ngModel)]="selectedOption">
+        <mat-radio-button *ngFor="let filter of this.filters" (click)="changeFilter(filter)" [value]="filter">
+          <img width="100%" height="100%" [src]="filter.imagePath">
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </form>
+</div>
+

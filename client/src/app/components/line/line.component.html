@@ -1,0 +1,38 @@
+<div id="container">
+  <form id="line-form">
+    <div class="head-group">
+      <label class="title" id="thickness">Épaisseur</label>
+      <mat-slider
+        id="thickness-slider"
+        name="thickness-slider"
+        disabled="false"
+        [min]="THICKNESS_SLIDER_MINIMUM"
+        [max]="THICKNESS_SLIDER_MAXIMUM"
+        step="1"
+        thumbLabel="true"
+        tickInterval="false"
+        [(ngModel)]="service.thickness"
+        vertical="false">
+      </mat-slider>
+    </div>
+    <label class="title">Jonctions</label>
+    <div class="group">
+      <mat-slide-toggle [checked]="service.jointIsDot" (change)="updateJunctionType()">Avec points</mat-slide-toggle>
+    </div>
+    <div *ngIf="service.jointIsDot" class="group">
+      <label class="title" id="diameter">Diamètre</label>
+      <mat-slider
+        id="diameter-slider"
+        name="diameter-slider"
+        disabled="false"
+        [min]="DIAMETER_SLIDER_MINIMUM"
+        [max]="DIAMETER_SLIDER_MAXIMUM"
+        step="1"
+        thumbLabel="true"
+        tickInterval="false"
+        [(ngModel)]="service.dotDiameter"
+        vertical="false">
+      </mat-slider>
+    </div>
+  </form>
+</div>

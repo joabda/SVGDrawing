@@ -1,0 +1,43 @@
+<div class="wrapper">
+  <div class="container">
+
+    <div class="header-area">
+      <div id="title">
+        <h2>Bienvenue sur PolyDessin !</h2>
+      </div>
+      <p id="subtitle">À tout dessin un artiste, et cet artiste, c'est vous !</p>
+    </div>
+    <hr >
+    <div class="options-area">
+      <h6 id="prompt">Veuillez choisir une option :</h6>
+
+        <div>
+          <div>
+            <a #createNewBtn class="btn btn-warning btn-center " routerLink = '/dessin'
+               role="button" (click)="disableShortcuts()" [state]="{path : '', comingFromEntryPoint : true, goingToGallery : false}">
+              Creer un nouveau dessin
+            </a>
+          </div>
+          <div>
+            <a #openGalleryBtn class="btn btn-warning btn-center " routerLink = '/dessin'
+               role="button" (click)="disableShortcuts()" [state]="{path : '', comingFromEntryPoint : true, goingToGallery : true}">
+              Ouvrir la Galerie de dessins
+            </a>
+          </div>
+          <div>
+            <a class="btn btn-warning btn-center " [routerLink]="[{outlets : { guideSubCategory : ['bienvenue']}}]"
+               skipLocationChange
+               role="button" (click)="openDialog()">
+              Afficher le guide d'Utilisation
+            </a>
+          </div>
+          <div>
+            <a *ngIf="hasDrawing" class="btn btn-warning btn-center " routerLink = '/dessin'
+               role="button" [state]="{path : '', continueDrawing : true}">
+              Continuer un dessin
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
