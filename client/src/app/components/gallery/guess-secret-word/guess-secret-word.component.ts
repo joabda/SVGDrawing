@@ -10,7 +10,7 @@ import { MAX_NB_TRY } from 'src/app/classes/constants';
 export class GuessSecretWordComponent {
 
   private secret: string;
-  input: string;
+  secretInput: string;
   private nbOfTries: number;
 
   constructor(
@@ -19,6 +19,7 @@ export class GuessSecretWordComponent {
   ) { 
     this.secret = data.secret;
     this.nbOfTries = 0;
+    this.secretInput = '';
     console.log(this.secret);
   }
 
@@ -26,8 +27,9 @@ export class GuessSecretWordComponent {
     this.ref.close(false);
   }
 
-  checkSecret(input: string): void {
-    if(input === this.secret) {
+  checkSecret(): void {
+    console.log('input ' + this.secretInput + ' secret: ' + this.secret);
+    if(this.secretInput === this.secret) {
       this.ref.close(true);
     } else {
       alert('Wrong!');

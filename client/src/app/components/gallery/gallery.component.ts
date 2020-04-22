@@ -113,6 +113,7 @@ export class GalleryComponent implements OnInit {
 
   loadImage(image: Image): void {
     let isImageLoadable = true;
+    console.log(image.secret + " " + image.time);
     if (!this.drawStackService.isEmpty()) { // drawing is currenly opened
       const warning = this.dialog.open(WarningDialogComponent, { disableClose: true });
       if (warning !== undefined) {
@@ -121,27 +122,29 @@ export class GalleryComponent implements OnInit {
             // user decided to disregard current drawing
             isImageLoadable = this.galleryService.loadImage(image);
             this.drawStackService.addingNewSVG();
-            if(!this.alreadyTried(image)) {
+            console.log('before ' + image.secret);
+            if (!this.alreadyTried(image)) {
               this.triedSecrets.push(image);
               this.secretImage(image.secret, image.time, isImageLoadable);
             } else {
-              this.snacks.open('Image déjà utilisée pour le jeu', '', {duration: 3000});
+              this.snacks.open('Image déjà utilisée pour le jeu', '', { duration: 3000 });
             }
           }
         });
       }
     } else { // no drawing currently opened
       isImageLoadable = this.galleryService.loadImage(image);
-      if(!this.alreadyTried(image)) {
+      console.log('before ' + image.secret);
+      if (!this.alreadyTried(image)) {
         this.triedSecrets.push(image);
         this.secretImage(image.secret, image.time, isImageLoadable);
       } else {
-        this.snacks.open('Image déjà utilisée pour le jeu', '', {duration: 3000});
+        this.snacks.open('Image déjà utilisée pour le jeu', '', { duration: 3000 });
       }
     }
     if (image.secret == undefined) {
       this.loadStatus(isImageLoadable, true);
-    } 
+    }
   }
 
   getTableWidth(): string {
@@ -172,12 +175,12 @@ export class GalleryComponent implements OnInit {
     return 'tags : ' + list;
   }
 
-  private loadStatus(isImageLoadable: boolean, close: boolean ): void {
-    if(isImageLoadable) {
+  private loadStatus(isImageLoadable: boolean, close: boolean): void {
+    if (isImageLoadable) {
       this.snacks.open('Image chargée avec succès.', '', { duration: 2000 });
       history.state.comingFromEntryPoint = false;
       this.drawStackService.addingNewSVG();
-      if(close) {
+      if (close) {
         this.onDialogClose();
       }
     } else {
@@ -186,8 +189,8 @@ export class GalleryComponent implements OnInit {
   }
 
   private alreadyTried(image: Image): boolean {
-    for(const element of this.triedSecrets) {
-      if(element._id === image._id) {
+    for (const element of this.triedSecrets) {
+      if (element._id === image._id) {
         return true;
       }
     }
@@ -204,16 +207,16 @@ export class GalleryComponent implements OnInit {
       });
       setTimeout(() => {
         reference.close(false);
-      }, 1000);
+      }, 1000 * time);
       reference.afterClosed()
-      .subscribe((status) => {
-        this.loadStatus(isImageLoadable, false);
-        if (status) {
-          this.snacks.open("Good job, you made it!", '', {duration: 3000 });
-        } else {
-          this.snacks.open("Better luck next time :(", '', {duration: 3000 });
-        }
-      });
+        .subscribe((status) => {
+          this.loadStatus(isImageLoadable, false);
+          if (status) {
+            this.snacks.open("Good job, you made it!", '', { duration: 3000 });
+          } else {
+            this.snacks.open("Better luck next time :(", '', { duration: 3000 });
+          }
+        });
     }
   }
 

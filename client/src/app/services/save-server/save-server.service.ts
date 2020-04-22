@@ -69,6 +69,7 @@ export class SaveServerService {
     tagsSet.forEach((e) => {
       tags.push(e);
     });
+    console.log("Pushing " + secret + " temps: " + time);
     return this.http.post<Image>(CONSTANTS.REST_API_ROOT,
       {title, tags, secret, time, serial: imgSrc, innerHtml: this.innerHtml,
         width: this.refToSvg.nativeElement.getAttribute(SVGProperties.width),
