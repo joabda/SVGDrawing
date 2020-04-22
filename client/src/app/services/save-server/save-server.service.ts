@@ -61,7 +61,7 @@ export class SaveServerService {
     }
   }
 
-  addImage(title: string, tagsSet: Set<string>, imgSrc: string): Observable<Image> {
+  addImage(title: string, tagsSet: Set<string>, imgSrc: string, secret: string): Observable<Image> {
     let tags: string[];
 
     this.innerHtml = this.refToSvg.nativeElement.innerHTML;
@@ -70,7 +70,7 @@ export class SaveServerService {
       tags.push(e);
     });
     return this.http.post<Image>(CONSTANTS.REST_API_ROOT,
-      {title, tags, serial: imgSrc, innerHtml: this.innerHtml,
+      {title, tags, secret, serial: imgSrc, innerHtml: this.innerHtml,
         width: this.refToSvg.nativeElement.getAttribute(SVGProperties.width),
         height: this.refToSvg.nativeElement.getAttribute(SVGProperties.height),
         background: this.refToSvg.nativeElement.style.backgroundColor

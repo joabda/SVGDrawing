@@ -114,7 +114,9 @@ export class SaveServerComponent implements  AfterViewInit {
   private async addImage(): Promise<void> {
     this.isSaving = true;
     this.snacks.open('Début de la sauvegarde', '', {duration : 1400} );
-    this.saveService.addImage(this.title, this.tags , this.exportation.imageAfterDeserialization.src)
+    let oneSecret: string = '';
+    this.secrets.forEach( element => oneSecret = element);
+    this.saveService.addImage(this.title, this.tags , this.exportation.imageAfterDeserialization.src, oneSecret)
       .subscribe((data: Image) => {
         // do nothing
       }, (error: HttpErrorResponse) => {
