@@ -10,6 +10,7 @@ import { Image } from '../../interfaces/image';
 import { GalleryService } from '../../services/gallery/gallery.service';
 import { SaveServerService } from '../../services/save-server/save-server.service';
 import { WarningDialogComponent } from '../warning/warning-dialog.component';
+import { GuessSecretWordComponent } from './guess-secret-word/guess-secret-word.component';
 
 @Component({
   selector: 'app-gallery',
@@ -25,16 +26,17 @@ export class GalleryComponent implements OnInit {
   tagName: string;
   hoveredIndex: number;
   isLoading: boolean;
+  private triedSecrets: Image[];
 
   constructor(private dialogRef: MatDialogRef<GalleryComponent>,
-              private saveService: SaveServerService,
-              private snacks: MatSnackBar,
-              private sanitizer: DomSanitizer,
-              private galleryService: GalleryService,
-              public router: Router,
-              private drawStackService: DrawStackService,
-              private shortcutManager: ShortcutManagerService,
-              private dialog: MatDialog
+    private saveService: SaveServerService,
+    private snacks: MatSnackBar,
+    private sanitizer: DomSanitizer,
+    private galleryService: GalleryService,
+    public router: Router,
+    private drawStackService: DrawStackService,
+    private shortcutManager: ShortcutManagerService,
+    private dialog: MatDialog
   ) {
     this.shortcutManager.disableShortcuts();
     this.tags = new Set<string>();
@@ -43,6 +45,7 @@ export class GalleryComponent implements OnInit {
     this.resultImages = [];
     this.tagName = '';
     this.isLoading = false;
+    this.triedSecrets = new Array;
   }
 
   ngOnInit(): void {
@@ -56,10 +59,10 @@ export class GalleryComponent implements OnInit {
           e.serial = this.sanitizer.bypassSecurityTrustResourceUrl(e.serial) as string;
         });
         this.isLoading = false;
-        this.snacks.open('Nous avons récupéré les images du serveur', '', {duration: 2000});
+        this.snacks.open('Nous avons récupéré les images du serveur', '', { duration: 2000 });
       }, (error) => {
         this.isLoading = false;
-        this.snacks.open('Une erreur de connexion est survenue', '', {duration: 3500});
+        this.snacks.open('Une erreur de connexion est survenue', '', { duration: 3500 });
       });
   }
 
@@ -87,25 +90,25 @@ export class GalleryComponent implements OnInit {
   deleteImage(id: string): void {
     this.isLoading = true;
     this.galleryService.deleteImage(id).subscribe((data) => {
-      for (let i = 0 ; i < this.images.length ; ++i) {
+      for (let i = 0; i < this.images.length; ++i) {
         if (id === this.images[i]._id) {
           // on supprime l'élément de notre copie du serveur
           this.images.splice(i, 1);
         }
       }
-      for (let i = 0 ; i < this.resultImages.length ; ++i) {
+      for (let i = 0; i < this.resultImages.length; ++i) {
         if (id === this.resultImages[i]._id) {
           // on supprime l'élément de notre liste de resultats temporaire
           this.resultImages.splice(i, 1);
         }
       }
       this.isLoading = false;
-      this.snacks.open('Votre image a été supprimée du serveur.', '', {duration: 2000});
+      this.snacks.open('Votre image a été supprimée du serveur.', '', { duration: 2000 });
     }, (error) => {
       this.isLoading = false;
-      this.snacks.open('Une erreur de connxeion empêche la suppression.', '', {duration: 3500});
+      this.snacks.open('Une erreur de connxeion empêche la suppression.', '', { duration: 3500 });
     })
-    ;
+      ;
   }
 
   loadImage(image: Image): void {
@@ -118,21 +121,27 @@ export class GalleryComponent implements OnInit {
             // user decided to disregard current drawing
             isImageLoadable = this.galleryService.loadImage(image);
             this.drawStackService.addingNewSVG();
+            if(!this.alreadyTried(image)) {
+              this.triedSecrets.push(image);
+              this.secretImage(image.secret, image.time, isImageLoadable);
+            } else {
+              this.snacks.open('Image déjà utilisée pour le jeu', '', {duration: 3000});
+            }
           }
         });
       }
     } else { // no drawing currently opened
       isImageLoadable = this.galleryService.loadImage(image);
+      if(!this.alreadyTried(image)) {
+        this.triedSecrets.push(image);
+        this.secretImage(image.secret, image.time, isImageLoadable);
+      } else {
+        this.snacks.open('Image déjà utilisée pour le jeu', '', {duration: 3000});
+      }
     }
-
-    if (isImageLoadable) {
-      this.snacks.open('Image chargée avec succès.', '', {duration: 2000});
-      history.state.comingFromEntryPoint = false;
-      this.drawStackService.addingNewSVG();
-      this.onDialogClose();
-    } else {
-      this.snacks.open('Image corrompue. SVP effacer celle-ci et choisir une autre.', '', {duration: 3500});
-    }
+    if (image.secret == undefined) {
+      this.loadStatus(isImageLoadable, true);
+    } 
   }
 
   getTableWidth(): string {
@@ -163,6 +172,51 @@ export class GalleryComponent implements OnInit {
     return 'tags : ' + list;
   }
 
+  private loadStatus(isImageLoadable: boolean, close: boolean ): void {
+    if(isImageLoadable) {
+      this.snacks.open('Image chargée avec succès.', '', { duration: 2000 });
+      history.state.comingFromEntryPoint = false;
+      this.drawStackService.addingNewSVG();
+      if(close) {
+        this.onDialogClose();
+      }
+    } else {
+      this.snacks.open('Image corrompue. SVP effacer celle-ci et choisir une autre.', '', { duration: 3500 });
+    }
+  }
+
+  private alreadyTried(image: Image): boolean {
+    for(const element of this.triedSecrets) {
+      if(element._id === image._id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private secretImage(secret: string, time: number, isImageLoadable: boolean): void {
+    if (secret !== undefined && secret !== '' && secret.length >= 3) {
+      const reference = this.dialog.open(GuessSecretWordComponent, {
+        data: {
+          secret: secret
+        },
+        disableClose: true
+      });
+      setTimeout(() => {
+        reference.close(false);
+      }, 1000);
+      reference.afterClosed()
+      .subscribe((status) => {
+        this.loadStatus(isImageLoadable, false);
+        if (status) {
+          this.snacks.open("Good job, you made it!", '', {duration: 3000 });
+        } else {
+          this.snacks.open("Better luck next time :(", '', {duration: 3000 });
+        }
+      });
+    }
+  }
+
   private filterWithTag(): void {
     if (this.tags.size === 0) {
       this.resultImages = this.images;
@@ -182,7 +236,7 @@ export class GalleryComponent implements OnInit {
       }
     }
     if (this.resultImages.length === 0) {
-      this.snacks.open('Aucun résultat ne correspond à votre recherche.', '', {duration: 3500});
+      this.snacks.open('Aucun résultat ne correspond à votre recherche.', '', { duration: 3500 });
     }
   }
 }

@@ -72,6 +72,7 @@ import { ResizeObserverDirective } from './components/workspace/resize-observer.
 import { WorkspaceComponent } from './components/workspace/workspace.component';
 import { AngularMaterialModule } from './modules/angular-material.module';
 import { DrawablePropertiesService } from './services/drawable/properties/drawable-properties.service';
+import { GuessSecretWordComponent } from './components/gallery/guess-secret-word/guess-secret-word.component';
 
 @NgModule({
   declarations: [
@@ -135,7 +136,8 @@ import { DrawablePropertiesService } from './services/drawable/properties/drawab
     SceauGuideComponent,
     MailGuideComponent,
     TextGuideComponent,
-    PlumeGuideComponent
+    PlumeGuideComponent,
+    GuessSecretWordComponent
   ],
   entryComponents: [
     ColorPickerComponent,
@@ -145,7 +147,8 @@ import { DrawablePropertiesService } from './services/drawable/properties/drawab
     WarningDialogComponent,
     GalleryComponent,
     UserGuideComponent,
-    ExportComponent
+    ExportComponent,
+    GuessSecretWordComponent
   ],
   imports: [
     BrowserAnimationsModule,

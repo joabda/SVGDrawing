@@ -112,6 +112,7 @@ export const MOUSE_ROLL_CHANGE_ALT = 1;
 export const TILE_WIDTH_PX = 250;
 export const SVG_SERIAL_SIGNATURE = 'data:image/svg+xml;';
 export const SVG_HTML_TAG = '<defs';
+export const MAX_NB_TRY = 3;
 
 // SaveServer
 export const MAX_TAGS_ALLOWED = 5;
