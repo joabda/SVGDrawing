@@ -38,6 +38,37 @@
         </mat-chip>
       </mat-chip-list>
     </div>
+    <div class="sub-section">
+      <h5>Mot Secret</h5>
+      <form class="tag-section">
+        <mat-form-field>
+          <mat-label class="text">Ajouter un mot secret</mat-label>
+          <input [(ngModel)]="secret" [ngModelOptions]="{standalone: true}" matInput>
+          </mat-form-field>
+        <button mat-button class="add-tag-button" (click)="addSecret(secret)">Ajouter</button>
+      </form>
+      <mat-chip-list>
+        <mat-chip *ngFor="let secret of secrets" [selectable]="true"
+            [removable]="true" (removed)="removeSecret(secret)">
+          {{ secret }}
+          <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+    <div class="details">
+      <form class="info">
+        <mat-form-field>
+          <mat-label class="text" >Temps Cible</mat-label>
+          <input type="number" [(ngModel)]="timeLimit" (change)="isValidTime=checkTimeValidity(timeLimit)"
+                  [ngModelOptions]="{standalone: true}" matInput >
+        </mat-form-field>
+        <div class="icon" [matTooltip]="'Le temps doit etre inferieur a 5 minutes mais supperieur a 5 secondes. (Entrez le temps en secondes)'"
+              matTooltipPosition="below">
+          <button mat-button>
+            <img src="../../../assets/icons/guide.svg">
+          </button>
+        </div>
+      </form>
 
   <div class="sub-section">
     <h5>Apperçu</h5>

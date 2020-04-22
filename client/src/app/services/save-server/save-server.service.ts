@@ -24,6 +24,10 @@ export class SaveServerService {
     return REGEX_TITLE.test(title);
   }
 
+  checkTimeValidity(time: number): boolean {
+    return (time > 5 && time < 350);
+  }
+
   addTag(etiquette: string, data: Set<string>): boolean {
     if (this.checkTagValidity(etiquette)) {
       data.add(etiquette.toUpperCase());
@@ -32,8 +36,20 @@ export class SaveServerService {
     return false;
   }
 
+  addSecret(secret: string, data: Set<string>): boolean {
+    if(this.checkTagValidity(secret)) {
+      data.add(secret);
+      return true;
+    }
+    return false;
+  }
+
   removeTag(etiquette: string, data: Set<string>): void {
     data.delete(etiquette);
+  }
+
+  removeSecret(secret: string, data: Set<string>): void {
+    data.delete(secret);
   }
 
   handleError(error: HttpErrorResponse): void {
